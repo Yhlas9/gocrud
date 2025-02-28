@@ -1,12 +1,18 @@
 package routers
 
 import (
+	"gocrud/handlers"
+	"gocrud/repositories"
+	"gocrud/services"
+
 	"github.com/gin-gonic/gin"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/handlers"
+	"gorm.io/gorm"
 )
 
-func SetupRouter() *gin.Engine {
-	r := gin.Default()
+func SetupRouter(db *gorm.DB) *gin.Engine {
+	r := gin.Default()	
+
+	handlers := handlers.NewBookHandler(services.NewBookService(repositories.NewBookRepository(db)))
 
 	// Define the routes
 	r.GET("/books", handlers.GetBooks)

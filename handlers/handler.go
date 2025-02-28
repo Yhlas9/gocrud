@@ -1,10 +1,14 @@
 package handlers
 
 import (
+	"errors"
+	"gocrud/models"
+	"gocrud/services"
 	"net/http"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/models"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/services"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 //Korocem repositories baza dannydan alyp beryan yeri. Bu handleram duzetyan yerimi kodung icinde. Baza danna girman
@@ -23,17 +27,24 @@ func (h *BookHandler) GetBooks(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Не удалось получить книги"})
 		return
 	}
+
 	c.JSON(http.StatusOK, books)
 }
 
 func (h *BookHandler) GetBookByID(c *gin.Context) {
-	id := c.Param("id")
-	bookID := uint(id)
+	bookID,_ := strconv.Atoi(c.Param("id"))
 	book, err := h.Service.GetBookByID(bookID)
+
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Книга не найдена"})
+		if errors.Is(err,gorm.ErrRecordNotFound){
+			c.JSON(http.StatusNotFound, gin.H{"message": "Книга не найдена"})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 		return
 	}
+
 	c.JSON(http.StatusOK, book)
 }
 
@@ -53,8 +64,7 @@ func (h *BookHandler) CreateBook(c *gin.Context) {
 
 // UpdateBook обрабатывает PUT /books/:id и обновляет книгу по ID
 func (h *BookHandler) UpdateBook(c *gin.Context) {
-	id := c.Param("id")
-	bookID := uint(id)
+	bookID,_ := strconv.Atoi(c.Param("id"))
 
 	var book models.Book
 	if err := c.ShouldBindJSON(&book); err != nil {
@@ -70,12 +80,12 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 }
 
 func (h *BookHandler) DeleteBook(c *gin.Context) {
-	id := c.Param("id")
-	bookID := uint(id)
+	bookID,_ := strconv.Atoi(c.Param("id"))
 
 	if err := h.Service.DeleteBook(bookID); err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"message": "Книга не найдена"})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Книга удалена"})
 }

@@ -1,40 +1,28 @@
 package main
 
 import (
+	"gocrud/models"
+	"gocrud/routers"
 	"log"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/models"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/handlers"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/repositories"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/roters"
-	"github.com/Yhlas9/gocrud.git/Bookstore/internal/services"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 func main() {
 	// Bara sqlite bazadanny acya . Catylya
-	db, err := gorm.Open(sqlite.Open("books.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Не удалось подключиться к базе данных: %v", err)
 	}
 
-	// ?
-	db.AutoMigrate(&models.Book{})
-
-	// ?
-	bookRepo := repositories.NewBookRepository(db)
-
-	// ?
-	bookService := services.NewBookService(bookRepo)
-
-	// ? 
-	bookHandler := handlers.NewBookHandler(bookService)
-
-	// ?
-	r := roters.SetupRouter(bookHandler)
-
-	// Serwery isletmek
-	r.Run(":8080")
+	if err := db.AutoMigrate(models.Book{});err != nil{
+		log.Fatal("can't migrate database")
+	}
+  
+	if err := routers.SetupRouter(db).Run(":8080");err != nil{
+		log.Fatal("error when running server")
+	}
 }
 
 

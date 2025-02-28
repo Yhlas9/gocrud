@@ -10,6 +10,7 @@ type Book struct {   //Book struktura
 	Publisher string  `json:"publisher"`
 	Rating    float64 `json:"rating"`
 }
+
 // Dusnukli bulara
 // Book struct should have the following fields:
 // - id (auto-incremented, primary key)
