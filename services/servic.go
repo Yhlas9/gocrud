@@ -5,8 +5,6 @@ import (
 	"gocrud/repositories"
 )
 
-//Obshyy dusunmedim name zatt. Name ucin error beryar.   Name edip beryar?
-
 type BookService struct {
 	Repository repositories.BookRepository
 }
