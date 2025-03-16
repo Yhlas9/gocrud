@@ -11,8 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//Korocem repositories baza dannydan alyp beryan yeri. Bu handleram duzetyan yerimi kodung icinde. Baza danna girman
-// Eyle dal bolsa dusundirip berai azajyk
 type BookHandler struct {
 	Service *services.BookService
 }
@@ -62,7 +60,6 @@ func (h *BookHandler) CreateBook(c *gin.Context) {
 	c.JSON(http.StatusCreated, book)
 }
 
-// UpdateBook обрабатывает PUT /books/:id и обновляет книгу по ID
 func (h *BookHandler) UpdateBook(c *gin.Context) {
 	bookID,_ := strconv.Atoi(c.Param("id"))
 
